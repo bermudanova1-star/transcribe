@@ -1,7 +1,7 @@
-# animato-transcribe-pipeline v4
+# animato-transcribe-pipeline v5
 # Created by Animato. Transcribes the audio of one job (a branch called job-<id>) with an on-GitHub copy of the speech model
 # and writes results/<id>.json back to that branch. A job called "warm" only makes sure the model is downloaded and cached.
-# Nothing here runs unless the Animato app starts it (or the weekly keep-alive below, which takes about a minute).
+# Nothing here runs unless the Animato app starts it for a real job. There is no schedule and no keep-alive.
 name: transcribe
 run-name: transcribe ${{ inputs.job || 'warm' }}
 
@@ -12,8 +12,6 @@ on:
         description: Job id (made by the app), or "warm"
         required: false
         default: warm
-  schedule:
-    - cron: '17 4 * * 1'
 
 permissions:
   contents: write
@@ -48,7 +46,7 @@ jobs:
           path: |
             ~/.cache/moonshine_voice
             ~/.cache/huggingface
-          key: transcribe-models-v4
+          key: transcribe-models-v5
 
       - name: Install the transcriber
         run: pip install -r requirements.txt
@@ -68,7 +66,7 @@ jobs:
           path: |
             ~/.cache/moonshine_voice
             ~/.cache/huggingface
-          key: transcribe-models-v4
+          key: transcribe-models-v5
 
       - name: Save the result
         if: always() && env.JOB != 'warm'
